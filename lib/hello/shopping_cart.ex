@@ -6,13 +6,10 @@ defmodule Hello.ShoppingCart do
   import Ecto.Query, warn: false
   alias Hello.Repo
 
-  alias Hello.Catalog
   alias Hello.ShoppingCart.{Cart, CartItem}
+  alias Hello.Catalog
 
-  def prune_cart_items(%Cart{} = cart) do
-    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
-    {:ok, reload_cart(cart)}
-  end
+  defp reload_cart(%Cart{} = cart), do: get_cart_by_user_uuid(cart.user_uuid)
 
   def get_cart_by_user_uuid(user_uuid) do
     Repo.one(
@@ -26,47 +23,6 @@ defmodule Hello.ShoppingCart do
     )
   end
 
-  @doc """
-  Returns the list of carts.
-
-  ## Examples
-
-      iex> list_carts()
-      [%Cart{}, ...]
-
-  """
-  def list_carts do
-    Repo.all(Cart)
-  end
-
-  @doc """
-  Gets a single cart.
-
-  Raises `Ecto.NoResultsError` if the Cart does not exist.
-
-  ## Examples
-
-      iex> get_cart!(123)
-      %Cart{}
-
-      iex> get_cart!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_cart!(id), do: Repo.get!(Cart, id)
-
-  @doc """
-  Creates a cart.
-
-  ## Examples
-
-      iex> create_cart(%{field: value})
-      {:ok, %Cart{}}
-
-      iex> create_cart(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_cart(user_uuid) do
     %Cart{user_uuid: user_uuid}
     |> Cart.changeset(%{})
@@ -76,8 +32,6 @@ defmodule Hello.ShoppingCart do
       {:error, changeset} -> {:error, changeset}
     end
   end
-
-  defp reload_cart(%Cart{} = cart), do: get_cart_by_user_uuid(cart.user_uuid)
 
   def add_item_to_cart(%Cart{} = cart, %Catalog.Product{} = product) do
     %CartItem{quantity: 1, price_when_carted: product.price}
@@ -102,18 +56,6 @@ defmodule Hello.ShoppingCart do
     {:ok, reload_cart(cart)}
   end
 
-  @doc """
-  Updates a cart.
-
-  ## Examples
-
-      iex> update_cart(cart, %{field: new_value})
-      {:ok, %Cart{}}
-
-      iex> update_cart(cart, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_cart(%Cart{} = cart, attrs) do
     changeset =
       cart
@@ -132,20 +74,9 @@ defmodule Hello.ShoppingCart do
     end
   end
 
-  @doc """
-  Deletes a cart.
-
-  ## Examples
-
-      iex> delete_cart(cart)
-      {:ok, %Cart{}}
-
-      iex> delete_cart(cart)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_cart(%Cart{} = cart) do
-    Repo.delete(cart)
+  def prune_cart_items(%Cart{} = cart) do
+    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
+    {:ok, reload_cart(cart)}
   end
 
   @doc """
@@ -159,87 +90,6 @@ defmodule Hello.ShoppingCart do
   """
   def change_cart(%Cart{} = cart, attrs \\ %{}) do
     Cart.changeset(cart, attrs)
-  end
-
-  @doc """
-  Returns the list of cart_items.
-
-  ## Examples
-
-      iex> list_cart_items()
-      [%CartItem{}, ...]
-
-  """
-  def list_cart_items do
-    Repo.all(CartItem)
-  end
-
-  @doc """
-  Gets a single cart_item.
-
-  Raises `Ecto.NoResultsError` if the Cart item does not exist.
-
-  ## Examples
-
-      iex> get_cart_item!(123)
-      %CartItem{}
-
-      iex> get_cart_item!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_cart_item!(id), do: Repo.get!(CartItem, id)
-
-  @doc """
-  Creates a cart_item.
-
-  ## Examples
-
-      iex> create_cart_item(%{field: value})
-      {:ok, %CartItem{}}
-
-      iex> create_cart_item(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_cart_item(attrs \\ %{}) do
-    %CartItem{}
-    |> CartItem.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a cart_item.
-
-  ## Examples
-
-      iex> update_cart_item(cart_item, %{field: new_value})
-      {:ok, %CartItem{}}
-
-      iex> update_cart_item(cart_item, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_cart_item(%CartItem{} = cart_item, attrs) do
-    cart_item
-    |> CartItem.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a cart_item.
-
-  ## Examples
-
-      iex> delete_cart_item(cart_item)
-      {:ok, %CartItem{}}
-
-      iex> delete_cart_item(cart_item)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_cart_item(%CartItem{} = cart_item) do
-    Repo.delete(cart_item)
   end
 
   @doc """

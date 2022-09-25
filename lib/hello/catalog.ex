@@ -6,8 +6,7 @@ defmodule Hello.Catalog do
   import Ecto.Query, warn: false
   alias Hello.Repo
 
-  alias Hello.Catalog.Product
-  alias Hello.Catalog.Category
+  alias Hello.Catalog.{Product, Category}
 
   @doc """
   Returns the list of products.
