@@ -15,7 +15,8 @@ defmodule Hello.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Hello.PubSub},
       # Start the Endpoint (http/https)
-      HelloWeb.Endpoint
+      HelloWeb.Endpoint,
+      HelloWeb.Presence
       # Start a worker by calling: Hello.Worker.start_link(arg)
       # {Hello.Worker, arg}
     ]
