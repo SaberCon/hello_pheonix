@@ -19,4 +19,6 @@
   <% end %>
 
   <b>Total</b>: <%= currency_to_str(ShoppingCart.total_cart_price(@cart)) %>
+
+  <%= link "complete order", to: Routes.order_path(@conn, :create), method: :post %>
 <% end %>
