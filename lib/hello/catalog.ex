@@ -18,7 +18,7 @@ defmodule Hello.Catalog do
 
   """
   def list_products do
-    Repo.all(Product)
+    Product |> Repo.all() |> Repo.preload(:categories)
   end
 
   @doc """
@@ -36,7 +36,7 @@ defmodule Hello.Catalog do
 
   """
   def get_product!(id) do
-    Product |> Repo.get(id) |> Repo.preload(:categories)
+    Product |> Repo.get!(id) |> Repo.preload(:categories)
   end
 
   @doc """
