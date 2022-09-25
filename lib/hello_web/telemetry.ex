@@ -29,6 +29,16 @@ defmodule HelloWeb.Telemetry do
         tags: [:route],
         unit: {:native, :millisecond}
       ),
+      summary("phoenix.router_dispatch.stop.duration",
+        tags: [:method, :route],
+        tag_values: &get_and_put_http_method/1,
+        unit: {:native, :millisecond}
+      ),
+      summary("phoenix.live_view.mount.stop.duration",
+        unit: {:native, :millisecond},
+        tags: [:view, :connected?],
+        tag_values: &live_view_metric_tag_values/1
+      ),
 
       # Database Metrics
       summary("hello.repo.query.total_time",
@@ -68,4 +78,17 @@ defmodule HelloWeb.Telemetry do
       # {HelloWeb, :count_users, []}
     ]
   end
+
+  defp get_and_put_http_method(%{conn: %{method: method}} = metadata) do
+    Map.put(metadata, :method, method)
+  end
+
+  defp live_view_metric_tag_values(metadata) do
+    metadata
+    |> Map.put(:view, inspect(metadata.socket.view))
+    |> Map.put(:connected?, get_connection_status(metadata.socket))
+  end
+
+  defp get_connection_status(%{connected?: true}), do: "Connected"
+  defp get_connection_status(%{connected?: false}), do: "Disconnected"
 end
