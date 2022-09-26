@@ -108,3 +108,7 @@ defmodule HelloWeb do
     apply(__MODULE__, which, [])
   end
 end
+
+defmodule HelloWeb.SomethingNotFoundError do
+  defexception [:message, plug_status: 404]
+end
