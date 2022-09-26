@@ -28,6 +28,8 @@ defmodule HelloWeb.Router do
     get "/cart", CartController, :show
     put "/cart", CartController, :update
     resources "/orders", OrderController, only: [:create, :show]
+
+    resources "/posts", PostController
   end
 
   defp fetch_current_uuid(conn, _) do
