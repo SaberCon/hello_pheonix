@@ -20,6 +20,12 @@ defmodule HelloWeb.Router do
   end
 
   scope "/", HelloWeb do
+    pipe_through :api
+
+    resources "/articles", ArticleController, except: [:new, :edit]
+  end
+
+  scope "/", HelloWeb do
     pipe_through :browser
 
     get "/", PageController, :index
